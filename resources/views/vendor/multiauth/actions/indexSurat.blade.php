@@ -23,6 +23,7 @@
                                         <th>Asal Surat</th>
                                         <th>Perihal</th>
                                         <th>Tujuan Surat</th>
+                                        <th>File</th>
                                         <th>Status</th>
                                         <th>Action</th>                                     
                                     </tr>
@@ -35,6 +36,7 @@
                                         <td>{{ $surat->asal_surat }}</td>
                                         <td>{{ $surat->perihal }}</td>
                                         <td>{{ $surat->user->name }}</td>
+                                        <td><a href="{{ asset('file/') }}">{{ $surat->file }}</a> </td>
                                         <td>
                                         @php
                                             if($surat->sifat == 'Biasa'){
@@ -57,7 +59,13 @@
                                         </td>
 
                                         <td>
-                                        <a href="#" type="button" class="btn btn-primary btn-s">Edit</a>  <a type="button" class="btn btn-danger btn-s">Delete</a>
+                                            @admin('super')
+                                            <a type="button" class="btn btn-danger btn-s">Delete</a>
+                                            @endadmin
+
+                                            @admin('reviewer')
+                                            <a type="button" class="btn btn-warning btn-s">Review</a>
+                                            @endadmin
                                         </td>
                                     </tr>
                                     @endforeach

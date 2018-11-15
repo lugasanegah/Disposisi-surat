@@ -5,7 +5,7 @@
             <div class="col-md-12">
                 <div class="widget">
                     <header class="widget-header">
-                        <h4 class="widget-title">{{ ucfirst(config('multiauth.prefix')) }} Dashboard</h4>
+                        <h4 class="widget-title">Log History</h4>
                     </header><!-- .widget-header -->
                     <hr class="widget-separator">
                     <div class="widget-body">
@@ -13,25 +13,23 @@
                             <table id="default-datatable" data-plugin="DataTable" class="table table-striped" cellspacing="0" width="100%">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Position</th>
-                                        <th>Office</th>
-                                        <th>Age</th>
-                                        <th>Start date</th>
-                                        <th>Salary</th>
-                                        <th>Action</th>                                     
+                                        <th>Nama Surat</th>
+                                        <th>User</th>
+                                        <th>Status</th>
+                                        <th>Keterangan</th>
+                                        <th>Waktu</th>                                     
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @foreach($dataLog as $log)
                                     <tr>
-                                        <td>Tiger Nixon</td>
-                                        <td>System Architect</td>
-                                        <td>Edinburgh</td>
-                                        <td>61</td>
-                                        <td>2011/04/25</td>
-                                        <td>$320,800</td>
-                                        <td><a href="#" type="button" class="btn btn-primary btn-s">Edit</a>  <a type="button" class="btn btn-danger btn-s">Delete</a></td>
+                                        <td>{{ $log->Surat->nama_surat }}</td>
+                                        <td>{{ $log->Admin->name }}</td>
+                                        <td>{{ $log->status }}</td>
+                                        <td>{{ $log->keterangan }}</td> 
+                                        <td>{{ $log->created_at }}</td>                                    
                                     </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>

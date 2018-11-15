@@ -1,37 +1,47 @@
 @extends('multiauth::layouts.app') 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-info text-white">
-                    Roles
-                    <span class="float-right">
-                        <a href="{{ route('admin.role.create') }}" class="btn btn-sm btn-success">New Role</a>
-                    </span>
-                </div>
+    <section class="app-content">
+        <div class="row">
+            <div class="col-md-12">
+                @include('multiauth::message')
+                <div class="widget">
+                    <header class="widget-header">
+                        <h4 class="widget-title">Register New {{ ucfirst(config('multiauth.prefix')) }}</h4>
+                    </header><!-- .widget-header -->                    
+                    <hr class="widget-separator">                    
+                    <div class="widget-body">
+                    <a href="{{ route('admin.role.create') }}" class="btn btn-sm btn-success">New Role</a>
+                    <br><br>
+                    <table class="table table-striped" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Nama</th>
+                                <th>Jumlah</th>
+                                <th>Aksi</th>                                                      
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($roles as $role)
+                            <tr>
+                                <td> {{ $role->name }}</td>                                            
+                                <td>
+                                    {{ $role->admins->count() }} User
+                                </td>
+                                <td>
+                                    <a href="" class="btn btn-sm btn-secondary mr-3" onclick="event.preventDefault(); document.getElementById('delete-form-{{ $role->id }}').submit();">Delete</a>
+                                    <form id="delete-form-{{ $role->id }}" action="{{ route('admin.role.delete',$role->id) }}" method="POST" style="display: none;">
+                                        @csrf @method('delete')
+                                    </form>
 
-                <div class="card-body">
-    @include('multiauth::message')
-                    <ol class="list-group">
-                        @foreach ($roles as $role)
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ $role->name }}
-                            <span class="badge badge-primary badge-pill">{{ $role->admins->count() }} {{ ucfirst(config('multiauth.prefix')) }}</span>
-                            <div class="float-right">
-                                <a href="" class="btn btn-sm btn-secondary mr-3" onclick="event.preventDefault(); document.getElementById('delete-form-{{ $role->id }}').submit();">Delete</a>
-                                <form id="delete-form-{{ $role->id }}" action="{{ route('admin.role.delete',$role->id) }}" method="POST" style="display: none;">
-                                    @csrf @method('delete')
-                                </form>
-
-                                <a href="{{ route('admin.role.edit',$role->id) }}" class="btn btn-sm btn-primary mr-3">Edit</a>
-                            </div>
-                        </li>
-                        @endforeach
-                    </ol>
-                </div>
-            </div>
+                                    <a href="{{ route('admin.role.edit',$role->id) }}" class="btn btn-sm btn-primary mr-3">Edit</a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    </div><!-- .widget-body -->
+                </div><!-- .widget -->
+            </div><!-- END column -->
         </div>
-    </div>
-</div>
+    </section>
 @endsection

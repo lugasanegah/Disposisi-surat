@@ -1,43 +1,50 @@
 @extends('multiauth::layouts.app') 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    {{ ucfirst(config('multiauth.prefix')) }} List
-                    <span class="float-right">
-                        <a href="{{route('admin.register')}}" class="btn btn-sm btn-success">New {{ ucfirst(config('multiauth.prefix')) }}</a>
-                    </span>
-                </div>
-                <div class="card-body">
-    @include('multiauth::message')
-                    <ul class="list-group">
-                        @foreach ($admins as $admin)
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ $admin->name }}
-                            <span class="badge">
+    <section class="app-content">
+        <div class="row">
+            <div class="col-md-12">
+                @include('multiauth::message')
+                <div class="widget">
+                    <header class="widget-header">
+                        <h4 class="widget-title">{{ ucfirst(config('multiauth.prefix')) }} List</h4>
+                    </header><!-- .widget-header -->                    
+                    <hr class="widget-separator">
+                    <div class="widget-body">
+                    <a href="{{route('admin.register')}}" class="btn btn-sm btn-success">New {{ ucfirst(config('multiauth.prefix')) }}</a>
+                    <br><br>
+                    @include('multiauth::message')
+                    <table class="table table-striped" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Nama</th>
+                                <th>Hak Akses</th>
+                                <th>Aksi</th>                                                      
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($admins as $admin)
+                            <tr>
+                                <td>{{ $admin->name }}</td>                                            
+                                <td>
                                     @foreach ($admin->roles as $role)
-                                        <span class="badge-warning badge-pill ml-2">
-                                            {{ $role->name }}
-                                        </span> @endforeach
-                            </span>
-                            <div class="float-right">
-                                <a href="#" class="btn btn-sm btn-secondary mr-3" onclick="event.preventDefault(); document.getElementById('delete-form-{{ $admin->id }}').submit();">Delete</a>
+                                        <button class="btn btn-success btn-xs">{{ $role->name }}</button>
+                                    @endforeach
+                                </td>
+                                <td><a href="#" class="btn btn-sm btn-secondary mr-3" onclick="event.preventDefault(); document.getElementById('delete-form-{{ $admin->id }}').submit();">Delete</a>
                                 <form id="delete-form-{{ $admin->id }}" action="{{ route('admin.delete',[$admin->id]) }}" method="POST" style="display: none;">
                                     @csrf @method('delete')
                                 </form>
 
-                                <a href="{{route('admin.edit',[$admin->id])}}" class="btn btn-sm btn-primary mr-3">Edit</a>
-                            </div>
-                        </li>
-                        @endforeach @if($admins->count()==0)
+                                <a href="{{route('admin.edit',[$admin->id])}}" class="btn btn-sm btn-primary mr-3">Edit</a></td>
+                            </tr>
+                            @endforeach @if($admins->count()==0)
                         <p>No {{ config('multiauth.prefix') }} created Yet, only super {{ config('multiauth.prefix') }} is available.</p>
                         @endif
-                    </ul>
-                </div>
-            </div>
+                        </tbody>
+                    </table>
+                    </div><!-- .widget-body -->
+                </div><!-- .widget -->
+            </div><!-- END column -->
         </div>
-    </div>
-</div>
+    </section>
 @endsection

@@ -14,7 +14,8 @@ class LogSuratController extends Controller
      */
     public function index()
     {
-        return view('multiauth::actions.logSurat');
+        $dataLog = Log_Surat::all();
+        return view('multiauth::actions.logSurat', ['dataLog' => $dataLog]);
     }
 
     /**

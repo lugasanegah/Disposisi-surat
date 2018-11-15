@@ -36,9 +36,9 @@
                                 <label for="#" class="col-sm-2 col-sm-offset-2 control-label">Sifat</label>
                                 <div class="col-sm-5">
                                     <select name="sifat_surat" class="form-control" required>
-                                        <option value="Mendesak">Surat Biasa</option>
-                                        <option value="Mendesak">Surat Edaran</option>
-                                        <option value="Mendesak">Surat Pengumuman</option>
+                                        <option value="Biasa">Surat Biasa</option>
+                                        <option value="Edaran">Surat Edaran</option>
+                                        <option value="Pengumuman">Surat Pengumuman</option>
                                         <option value="Mendesak">Surat Mendesak</option>
                                     </select>
                                 </div>

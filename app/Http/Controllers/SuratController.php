@@ -22,8 +22,19 @@ class SuratController extends Controller
      */
     public function index()
     {
+        $userActive = auth('admin')->user()->roles->toArray();        
 
-        return view('multiauth::actions.indexSurat');
+        if($userActive[0]['name'] == 'super' || 'reviewer'){
+
+            $dataSurat = Surat::all();
+
+        } else {
+
+             $dataSurat = Surat::where('tujuan_surat', '=', auth('admin')->user()->id)->where('status', '=', 'lolos review')->get();
+
+        }
+
+        return view('multiauth::actions.indexSurat', ['dataSurat' => $dataSurat, '$userActive' => $userActive]);
 
     }
 

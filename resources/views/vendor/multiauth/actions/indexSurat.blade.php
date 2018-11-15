@@ -18,25 +18,49 @@
                             <table id="default-datatable" data-plugin="DataTable" class="table table-striped" cellspacing="0" width="100%">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Position</th>
-                                        <th>Office</th>
-                                        <th>Age</th>
-                                        <th>Start date</th>
-                                        <th>Salary</th>
+                                        <th>Nama Surat</th>
+                                        <th>Nomor Surat</th>
+                                        <th>Asal Surat</th>
+                                        <th>Perihal</th>
+                                        <th>Tujuan Surat</th>
+                                        <th>Status</th>
                                         <th>Action</th>                                     
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @foreach($dataSurat as $surat)
                                     <tr>
-                                        <td>Tiger Nixon</td>
-                                        <td>System Architect</td>
-                                        <td>Edinburgh</td>
-                                        <td>61</td>
-                                        <td>2011/04/25</td>
-                                        <td>$320,800</td>
-                                        <td><a href="#" type="button" class="btn btn-primary btn-s">Edit</a>  <a type="button" class="btn btn-danger btn-s">Delete</a></td>
+                                        <td>{{ $surat->nama_surat }}</td>
+                                        <td>{{ $surat->nomor_surat }}</td>
+                                        <td>{{ $surat->asal_surat }}</td>
+                                        <td>{{ $surat->perihal }}</td>
+                                        <td>{{ $surat->user->name }}</td>
+                                        <td>
+                                        @php
+                                            if($surat->sifat == 'Biasa'){
+                                                echo '<button class="btn btn-success btn-xs">'.$surat->sifat.'</button>';
+                                            } else if($surat->sifat == 'Edaran'){
+                                                echo '<button class="btn btn-primary btn-xs">'.$surat->sifat.'</button>';
+                                            } else if($surat->sifat == 'Pengumuman'){
+                                                echo '<button class="btn btn-warning btn-xs">'.$surat->sifat.'</button>';
+                                            } else {
+                                                echo '<button class="btn btn-danger btn-xs">'.$surat->sifat.'</button>';
+                                            }
+                                            echo ' ';
+                                            if($surat->status == 'belum direview'){
+                                                echo '<button class="btn btn-warning btn-xs">Baru</button>';
+                                            } else if($surat->sifat == 'lolos review'){
+                                                echo '<button class="btn btn-success btn-xs">Disposisi</button>';
+                                            } 
+                                        @endphp
+                                            
+                                        </td>
+
+                                        <td>
+                                        <a href="#" type="button" class="btn btn-primary btn-s">Edit</a>  <a type="button" class="btn btn-danger btn-s">Delete</a>
+                                        </td>
                                     </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>

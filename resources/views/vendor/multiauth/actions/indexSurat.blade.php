@@ -6,9 +6,14 @@
                 <div class="widget">
                     <header class="widget-header">
                         <h4 class="widget-title">{{ ucfirst(config('multiauth.prefix')) }} Dashboard</h4>
-                    </header><!-- .widget-header -->
+                    </header><!-- .widget-header -->                    
                     <hr class="widget-separator">
                     <div class="widget-body">
+                        @admin('super')
+                            <a href="{{ route('surat.create') }}" class="btn btn-success">Tambah Surat</a>
+                        @endadmin
+                        <br>
+                        <br>
                         <div class="table-responsive">
                             <table id="default-datatable" data-plugin="DataTable" class="table table-striped" cellspacing="0" width="100%">
                                 <thead>

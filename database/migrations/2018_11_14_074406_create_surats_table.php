@@ -21,7 +21,9 @@ class CreateSuratsTable extends Migration
             $table->string('asal_surat');
             $table->string('sifat');
             $table->string('perihal');
+            $table->string('tujuan_surat');            
             $table->date('tgl_surat');
+            $table->string('status');
             $table->string('file');
             $table->timestamps();
         });

@@ -39,8 +39,8 @@ Route::group([
     Route::get('/role/{role}/edit', 'RoleController@edit')->name('admin.role.edit');
     Route::patch('/role/{role}', 'RoleController@update')->name('admin.role.update');
 
-    Route::get('surat', 'SuratController@index')->name('admin.surat.daftar')->middleware('role:super');
-    Route::get('logsurat', 'LogSuratController@index')->name('admin.logSurat.daftar')->middleware('role:super');
+    Route::resource('surat', 'SuratController');
+    Route::resource('log', 'LogSuratController')->middleware('role:super');
 
     Route::get('/{any}', function () {
         return abort(404);

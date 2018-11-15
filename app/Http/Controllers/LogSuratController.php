@@ -14,7 +14,7 @@ class LogSuratController extends Controller
      */
     public function index()
     {
-        //
+        return view('multiauth::actions.logSurat');
     }
 
     /**

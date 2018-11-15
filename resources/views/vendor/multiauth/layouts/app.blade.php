@@ -84,10 +84,7 @@
             @endadmin
             <li>
             	<a href="{{ url('/logout') }}"> Logout </a>
-            </li>          
-            {{-- <li class="nav-item">
-                <a class="nav-link" href="{{route('admin.login')}}">{{ ucfirst(config('multiauth.prefix')) }} Login</a>
-            </li> --}}             
+            </li>                      
           </ul>
         </li>
       </ul>
@@ -102,7 +99,7 @@
     <div class="media">
       <div class="media-left">
         <div class="avatar avatar-md avatar-circle">
-          <a href="javascript:void(0)"><img class="img-responsive" src="../assets/images/221.jpg" alt="avatar"/></a>
+          <a href="javascript:void(0)"><img class="img-responsive" src="{{ asset('assets/images/221.jpg') }}" alt="avatar"/></a>
         </div><!-- .avatar -->
       </div>
       <div class="media-body">
@@ -122,57 +119,20 @@
     <div class="menubar-scroll-inner">
       <ul class="app-menu">
         <li>
-          <a href="{{ route('admin.surat.daftar') }}">
+          <a href="{{ route('surat.index') }}">
             <i class="menu-icon zmdi zmdi-email zmdi-hc-lg"></i>
             <span class="menu-text">Surat</span>
+            <span class="label label-info menu-label">2</span>
           </a>
         </li>
       @admin('super')                
         <li>
-          <a href="{{ route('admin.logSurat.daftar') }}">
+          <a href="{{ route('log.index') }}">
             <i class="menu-icon zmdi zmdi-email zmdi-hc-lg"></i>
             <span class="menu-text">Log Surat</span>
           </a>
         </li>      
-      @endadmin  
-
-        <li class="has-submenu">
-          <a href="javascript:void(0)" class="submenu-toggle">
-            <i class="menu-icon zmdi zmdi-layers zmdi-hc-lg"></i>
-            <span class="menu-text">Layouts</span>
-            <span class="label label-warning menu-label">2</span>
-            <i class="menu-caret zmdi zmdi-hc-sm zmdi-chevron-right"></i>
-          </a>
-          <ul class="submenu">
-            <li><a href="../default/index.html"><span class="menu-text">Default</span></a></li>
-            <li><a href="../topbar/index.html"><span class="menu-text">Topbar</span></a></li>
-          </ul>
-        </li>        
-
-        <li class="has-submenu">
-          <a href="javascript:void(0)" class="submenu-toggle">
-            <i class="menu-icon zmdi zmdi-pin zmdi-hc-lg"></i>
-            <span class="menu-text">Maps</span>
-            <i class="menu-caret zmdi zmdi-hc-sm zmdi-chevron-right"></i>
-          </a>
-          <ul class="submenu">
-            <li><a href="map-google.html"><span class="menu-text">Google Maps</span></a></li>
-            <li><a href="map-vector.html"><span class="menu-text">Vector Maps</span></a></li>
-          </ul>
-        </li>
-
-        <li class="has-submenu">
-          <a href="javascript:void(0)" class="submenu-toggle">
-            <i class="menu-icon zmdi zmdi-apps zmdi-hc-lg"></i>
-            <span class="menu-text">Apps</span>
-            <span class="label label-info menu-label">2</span>
-            <i class="menu-caret zmdi zmdi-hc-sm zmdi-chevron-right"></i>
-          </a>
-          <ul class="submenu">
-            <li><a href="calendar.html"><span class="menu-text">Calendar</span></a></li>
-            <li><a href="contacts.html"><span class="menu-text">Contacts</span></a></li>
-          </ul>
-        </li>
+      @endadmin     
 
         <li class="menu-separator"><hr></li>
 

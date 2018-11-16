@@ -25,5 +25,12 @@ Route::group(['prefix' => 'admin'], function(){
 
 	Route::resource('log', 'LogSuratController')->middleware('role:super');
 
+	Route::get('review/{id}', 'SuratController@addReview')->name('admin.review')->middleware('role:reviewer');
+
+	Route::post('review/{id}', 'SuratController@saveReview')->name('admin.saveReview')->middleware('role:reviewer');
+
+	Route::get('disposisi/{id}', 'SuratController@addDisposisi')->name('admin.disposisi');
+
+	Route::post('disposisi/{id}', 'SuratController@saveDisposisi')->name('admin.saveDisposisi');
 });
 

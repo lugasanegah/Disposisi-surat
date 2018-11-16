@@ -10,13 +10,14 @@
                     </header><!-- .widget-header -->                    
                     <hr class="widget-separator">                    
                     <div class="widget-body">                
-                    <form action="{{ route('admin.saveReview', ['id' => $id]) }}" method="post">
+                    <form action="{{ route('admin.saveDisposisi', ['id' => $id]) }}" method="post">
                         @csrf
                         <div class="form-group">
                             <label for="role">Status</label>
-                            <select name="status" class="form-control">
-                                <option value="yes">Di Terima</option>
-                                <option value="no">Di Tolak</option>
+                            <select name="tujuan_surat" class="form-control">
+                            @foreach($dataUser as $user)
+                            <option value="{{ $user->id }}"> {{ $user->name }}</option>
+                            @endforeach
                             </select>
                         </div>
                         <div class="form-group">

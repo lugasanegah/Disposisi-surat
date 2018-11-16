@@ -107,7 +107,12 @@
           <h5><a href="javascript:void(0)" class="username">{{ auth('admin')->user() ? auth('admin')->user()->name : "" }}</a></h5>
           <ul>
             <li>
-              <small>{{ config('multiauth.prefix') }}</small>
+              <small>
+              <?php
+              $userActive = auth('admin')->user()->roles->toArray();
+              echo $userActive[0]['name'];
+              ?>
+              </small>
             </li>
           </ul>
         </div>

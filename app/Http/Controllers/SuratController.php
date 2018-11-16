@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Mail;
 use Symfony\Component\HttpFoundation\File\getClientOriginalName;
 
 class SuratController extends Controller
@@ -22,19 +23,30 @@ class SuratController extends Controller
      */
     public function index()
     {
-        $userActive = auth('admin')->user()->roles->toArray();        
+        if(auth('admin')->user() !== null){
 
-        if($userActive[0]['name'] == 'super' || 'reviewer'){
+            
+        
+        $userActive = auth('admin')->user()->roles->toArray();
+
+        if($userActive[0]['name'] == 'super'){        
 
             $dataSurat = Surat::all();
 
+        } else if($userActive[0]['name'] == 'reviewer'){
+
+            $dataSurat = Surat::where('status', '=', 'belum direview')->get();
+
         } else {
 
-             $dataSurat = Surat::where('tujuan_surat', '=', auth('admin')->user()->id)->where('status', '=', 'lolos review')->get();
+             $dataSurat = Surat::where('tujuan_surat', '=', auth('admin')->user()->id)->where('status', '=', 'lolos')->get();
 
         }
 
         return view('multiauth::actions.indexSurat', ['dataSurat' => $dataSurat, '$userActive' => $userActive]);
+        } else {
+            return view('welcome');
+        }
 
     }
 
@@ -85,7 +97,7 @@ class SuratController extends Controller
         $log = new Log_Surat;
         $log->id_surat = $lastInserted;
         $log->id_user = $userActive;
-        $log->status = 'surat masuk';
+        $log->status = 'baru';
         $log->keterangan = 'surat masuk baru, belum di review';
         $log->save();
 
@@ -149,5 +161,111 @@ class SuratController extends Controller
     public function destroy(Surat $surat)
     {
         //
+    }
+
+    public function addreview(request $request, $id)
+    {
+        return view('multiauth::actions.review', ['id' => $id]);
+    }
+
+    public function saveReview(request $request, $id)
+    {
+        DB::beginTransaction();
+        try{
+
+        $status = "";
+
+        if($request->status == 'yes'){
+            $status = 'lolos';
+        } else {
+            $status = 'ditolak';
+        }
+        $surat = Surat::findOrFail($id);
+
+        $surat->status = $status;        
+        $surat->save();
+
+        $userActive = auth('admin')->user()->id;    
+        $email = auth('admin')->user()->email;
+
+        $log = new Log_Surat;
+        $log->id_surat = $id;
+        $log->id_user = $userActive;
+        $log->status = $request->status;
+        $log->keterangan = $request->keterangan;
+        $log->save();
+
+        DB::commit();    
+
+        Mail::send(['text'=>'mail'], [$surat, $email], function ($m) use ($surat, $email) {
+            $m->from($email, 'Surat Masuk');
+
+            $m->to($surat->user->email, $surat->user->name)->subject('Surat Baru Masuk');
+        });
+
+        } catch (Exception $e) {
+            DB::rollback();
+            return back()->with([
+                'message'    => $e->getMessage(),
+                'alert-type' => 'error',
+            ])->withInput();
+        }
+
+         return redirect()
+            ->route('surat.index')
+            ->with([
+                'message'    => 'data berhasil tersimpan',
+                'alert-type' => 'success',
+            ]);
+    }
+
+    public function addDisposisi(request $request, $id)
+    {   
+        $user = Admin::all();
+        return view('multiauth::actions.disposisi', ['id' => $id, 'dataUser' => $user]);
+    }
+
+    public function saveDisposisi(request $request, $id)
+    {
+        DB::beginTransaction();
+        try{
+
+        $surat = Surat::findOrFail($id);
+
+        $surat->tujuan_surat = $request->tujuan_surat;        
+        $surat->save();
+
+        $userActive = auth('admin')->user()->id;    
+        $email = auth('admin')->user()->email;
+
+        $log = new Log_Surat;
+        $log->id_surat = $id;
+        $log->id_user = $userActive;
+        $log->status = 'Disposisi';
+        $log->keterangan = $request->keterangan;
+        $log->save();
+
+        DB::commit();    
+
+        Mail::send(['html'=>'mail'], [$surat, $email], function ($m) use ($surat, $email) {
+            $m->from($email, 'Surat Masuk');
+
+            $m->to($surat->user->email, $surat->user->name)->subject('Surat Baru Masuk');
+        });
+
+        } catch (Exception $e) {
+            DB::rollback();
+            return back()->with([
+                'message'    => $e->getMessage(),
+                'alert-type' => 'error',
+            ])->withInput();
+        }
+
+         return redirect()
+            ->route('surat.index')
+            ->with([
+                'message'    => 'data berhasil tersimpan',
+                'alert-type' => 'success',
+            ]);
     }
 }

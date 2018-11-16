@@ -50,9 +50,11 @@
                                             }
                                             echo ' ';
                                             if($surat->status == 'belum direview'){
-                                                echo '<button class="btn btn-warning btn-xs">Baru</button>';
-                                            } else if($surat->sifat == 'lolos review'){
-                                                echo '<button class="btn btn-success btn-xs">Disposisi</button>';
+                                                echo '<button class="btn btn-warning btn-xs">New</button>';
+                                            } else if($surat->status == 'lolos'){
+                                                echo '<button class="btn btn-success btn-xs">Reviewed</button>';
+                                            } else if($surat->status == 'ditolak'){
+                                                echo '<button class="btn btn-danger btn-xs">Reviewed</button>';
                                             } 
                                         @endphp
                                             
@@ -64,7 +66,11 @@
                                             @endadmin
 
                                             @admin('reviewer')
-                                            <a type="button" class="btn btn-warning btn-s">Review</a>
+                                            <a href="{{ route('admin.review', ['id' => $surat->id]) }}" type="button" class="btn btn-warning btn-s">Review</a>
+                                            @endadmin
+
+                                            @admin('cto,employee')
+                                            <a href="{{ route('admin.disposisi', ['id' => $surat->id]) }}" type="button" class="btn btn-primary btn-s">Disposisi</a>
                                             @endadmin
                                         </td>
                                     </tr>

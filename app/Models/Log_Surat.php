@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Log_Surat extends Model
 {
     protected $table = 'log_surats';
+    protected $dates = ['created_at', 'updated_at'];
 
     public function Surat(){
 
@@ -21,4 +22,5 @@ class Log_Surat extends Model
     	return $this->belongsTo(Admin::class, 'id_user', 'id');
 
     }
+
 }

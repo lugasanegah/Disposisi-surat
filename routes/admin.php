@@ -40,6 +40,9 @@ Route::group([
     Route::patch('/role/{role}', 'RoleController@update')->name('admin.role.update');
 
     Route::resource('surat', 'SuratController');
+
+    Route::get('surat/data/ajax', 'SuratController@indexData')->name('admin.dataSurat');
+
     Route::resource('log', 'LogSuratController')->middleware('role:super');
 
     Route::get('review/{id}', 'SuratController@addReview')->name('admin.review')->middleware('role:reviewer');

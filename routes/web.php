@@ -15,11 +15,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('send', 'mailController@send');
+// Route::get('send', 'mailController@send');
 
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 
 Route::group(['prefix' => 'admin'], function(){
+
+	Route::get('surat/data/ajax', 'SuratController@indexData')->name('admin.dataSurat');
 
 	Route::resource('surat', 'SuratController');
 

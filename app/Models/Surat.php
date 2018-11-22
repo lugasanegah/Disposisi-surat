@@ -12,7 +12,7 @@ class Surat extends Model
 
     public function logSurat(){
 
-    	return $this->hasMany(Log_Surat::class, 'id_surat');
+    	return $this->hasMany(Log_Surat::class, 'id', 'id_surat');
 
     }
 

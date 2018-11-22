@@ -1,9 +1,9 @@
 @extends('multiauth::layouts.app') 
 @section('content')
     <section class="app-content">
+        @include('multiauth::message')
         <div class="row">
-            <div class="col-md-12">
-                @include('multiauth::message')
+            <div class="col-md-12">                
                 <div class="widget">
                     <header class="widget-header">
                         <h4 class="widget-title">Add Review</h4>

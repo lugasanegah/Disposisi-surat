@@ -1,6 +1,7 @@
 @extends('multiauth::layouts.app') 
 @section('content')
     <section class="app-content">
+        @include('multiauth::message')
         <div class="row">
             <div class="col-md-12">
                 <div class="widget">
@@ -25,9 +26,21 @@
                                     <tr>
                                         <td>{{ $log->Surat->nama_surat }}</td>
                                         <td>{{ $log->Admin->name }}</td>
-                                        <td>{{ $log->status }}</td>
+                                        <td>
+                                        <?php
+                                        if($log->status == 'baru'){
+                                            echo 'Surat Baru';
+                                        } else if($log->status == 'yes'){
+                                            echo 'Telah direview';
+                                        } else if($log->status == 'no'){
+                                            echo 'Di tolak';
+                                        } else if($log->status == 'Disposisi'){
+                                            echo 'Disposisi';
+                                        }
+                                        ?>
+                                        </td>
                                         <td>{{ $log->keterangan }}</td> 
-                                        <td>{{ $log->created_at }}</td>                                    
+                                        <td>{{ $log->created_at->diffForHumans() }}</td>                                    
                                     </tr>
                                     @endforeach
                                 </tbody>

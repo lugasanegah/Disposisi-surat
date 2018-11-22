@@ -6,7 +6,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
 	<meta name="description" content="Admin, Dashboard, Bootstrap" />
-	<link rel="shortcut icon" sizes="196x196" href="../assets/images/logo.png">
+	<link rel="shortcut icon" sizes="196x196" href="{{ asset('assets/images/logo.png') }}">
 	<title>{{ config('app.name', 'Laravel') }} {{ ucfirst(config('multiauth.prefix')) }}</title>
 	
 	<link rel="stylesheet" href="{{ asset('libs/bower/font-awesome/css/font-awesome.min.css') }}">
@@ -14,7 +14,8 @@
 	<!-- build:css ../assets/css/app.min.css -->
 	<link rel="stylesheet" href="{{ asset('libs/bower/animate.css/animate.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('libs/bower/fullcalendar/dist/fullcalendar.min.css') }}">
-	<link rel="stylesheet" href="{{ asset('libs/bower/perfect-scrollbar/css/perfect-scrollbar.css') }}">
+  <link rel="stylesheet" href="{{ asset('libs/bower/perfect-scrollbar/css/perfect-scrollbar.css') }}">
+	<link rel="stylesheet" href="{{ asset('libs/misc/datatables/datatables.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('assets/css/bootstrap.css') }}">
 	<link rel="stylesheet" href="{{ asset('assets/css/core.css') }}">
 	<link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
@@ -127,18 +128,8 @@
           <a href="{{ route('surat.index') }}">
             <i class="menu-icon zmdi zmdi-email zmdi-hc-lg"></i>
             <span class="menu-text">Surat</span>
-            <span class="label label-info menu-label">2</span>
           </a>
-        </li>
-      @admin('super')                
-        <li>
-          <a href="{{ route('log.index') }}">
-            <i class="menu-icon zmdi zmdi-email zmdi-hc-lg"></i>
-            <span class="menu-text">Log Surat</span>
-          </a>
-        </li>      
-      @endadmin     
-
+        </li>  
         <li class="menu-separator"><hr></li>
 
       </ul><!-- .app-menu -->
@@ -199,9 +190,12 @@
 	<script src="{{ asset('assets/js/library.js') }}"></script>
 	<script src="{{ asset('assets/js/plugins.js') }}"></script>
 	<script src="{{ asset('assets/js/app.js') }}"></script>
+  <script src="{{ asset('libs/misc/datatables/datatables.min.js') }}"></script>
 	<!-- endbuild -->
 	<script src="{{ asset('libs/bower/moment/moment.js') }}"></script>
 	<script src="{{ asset('libs/bower/fullcalendar/dist/fullcalendar.min.js') }}"></script>
 	<script src="{{ asset('assets/js/fullcalendar.js') }}"></script>
+
+  @stack('scripts')   
 </body>
 </html>

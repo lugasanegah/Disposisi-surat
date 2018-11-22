@@ -1,6 +1,7 @@
 @extends('multiauth::layouts.app') 
 @section('content')
     <section class="app-content">
+        @include('multiauth::message')
         <div class="row">
             <div class="col-md-12">
                 <div class="widget">
@@ -15,67 +16,17 @@
                         <br>
                         <br>
                         <div class="table-responsive">
-                            <table id="default-datatable" data-plugin="DataTable" class="table table-striped" cellspacing="0" width="100%">
+                            <table id="users-table" class="table table-striped" cellspacing="0" width="100%">
                                 <thead>
                                     <tr>
-                                        <th>Nama Surat</th>
-                                        <th>Nomor Surat</th>
-                                        <th>Asal Surat</th>
-                                        <th>Perihal</th>
-                                        <th>Tujuan Surat</th>
-                                        <th>File</th>
+                                        <th>ID</th>
+                                        <th width="20%">Nama Surat</th>
+                                        <th width="15%">Perihal</th>
+                                        <th width="15%">Tujuan Surat</th>
                                         <th>Status</th>
                                         <th>Action</th>                                     
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    @foreach($dataSurat as $surat)
-                                    <tr>
-                                        <td>{{ $surat->nama_surat }}</td>
-                                        <td>{{ $surat->nomor_surat }}</td>
-                                        <td>{{ $surat->asal_surat }}</td>
-                                        <td>{{ $surat->perihal }}</td>
-                                        <td>{{ $surat->user->name }}</td>
-                                        <td><a href="{{ asset('file/') }}">{{ $surat->file }}</a> </td>
-                                        <td>
-                                        @php
-                                            if($surat->sifat == 'Biasa'){
-                                                echo '<button class="btn btn-success btn-xs">'.$surat->sifat.'</button>';
-                                            } else if($surat->sifat == 'Edaran'){
-                                                echo '<button class="btn btn-primary btn-xs">'.$surat->sifat.'</button>';
-                                            } else if($surat->sifat == 'Pengumuman'){
-                                                echo '<button class="btn btn-warning btn-xs">'.$surat->sifat.'</button>';
-                                            } else {
-                                                echo '<button class="btn btn-danger btn-xs">'.$surat->sifat.'</button>';
-                                            }
-                                            echo ' ';
-                                            if($surat->status == 'belum direview'){
-                                                echo '<button class="btn btn-warning btn-xs">New</button>';
-                                            } else if($surat->status == 'lolos'){
-                                                echo '<button class="btn btn-success btn-xs">Reviewed</button>';
-                                            } else if($surat->status == 'ditolak'){
-                                                echo '<button class="btn btn-danger btn-xs">Reviewed</button>';
-                                            } 
-                                        @endphp
-                                            
-                                        </td>
-
-                                        <td>
-                                            @admin('super')
-                                            <a type="button" class="btn btn-danger btn-s">Delete</a>
-                                            @endadmin
-
-                                            @admin('reviewer')
-                                            <a href="{{ route('admin.review', ['id' => $surat->id]) }}" type="button" class="btn btn-warning btn-s">Review</a>
-                                            @endadmin
-
-                                            @admin('cto,employee')
-                                            <a href="{{ route('admin.disposisi', ['id' => $surat->id]) }}" type="button" class="btn btn-primary btn-s">Disposisi</a>
-                                            @endadmin
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
                             </table>
                         </div>
                     </div><!-- .widget-body -->
@@ -84,3 +35,24 @@
         </div>
     </section>
 @endsection
+
+@push('scripts')
+<script>
+$(function() {
+    $('#users-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: '{{  route('admin.dataSurat') }}',
+        columns: [
+            { data: 'id', name: 'id' },
+            { data: 'nama_surat', name: 'nama_surat' },
+            { data: 'perihal', name: 'perihal' },
+            { data: 'tujuan_surat', name: 'tujuan_surat' },
+            { data: 'status', name: 'status' },
+            { data: 'action', name: 'action' }
+        ],
+        order: [[ 0, "desc" ]],
+    });
+});
+</script>
+@endpush

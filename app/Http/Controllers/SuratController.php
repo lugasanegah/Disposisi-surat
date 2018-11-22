@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Mail;
 use Symfony\Component\HttpFoundation\File\getClientOriginalName;
+use Yajra\DataTables\DataTables;
 
 class SuratController extends Controller
 {
@@ -23,31 +24,89 @@ class SuratController extends Controller
      */
     public function index()
     {
-        if(auth('admin')->user() !== null){
+        if(auth('admin')->user() !== null){            
+                
+            return view('multiauth::actions.indexSurat');
 
-            
-        
+        } else {
+
+            return redirect()->route('admin.login');
+
+        }
+
+    }
+
+    public function indexData()
+    {
         $userActive = auth('admin')->user()->roles->toArray();
 
-        if($userActive[0]['name'] == 'super'){        
+            if($userActive[0]['name'] == 'super'){        
 
-            $dataSurat = Surat::all();
+                $dataSurat = Surat::orderBy('id', 'desc')->get();
 
-        } else if($userActive[0]['name'] == 'reviewer'){
+            } else if($userActive[0]['name'] == 'reviewer'){
 
-            $dataSurat = Surat::where('status', '=', 'belum direview')->get();
+                $dataSurat = Surat::where('status', '=', 'belum direview')->sortByDesc('id')->get();
 
-        } else {
+            } else {
 
-             $dataSurat = Surat::where('tujuan_surat', '=', auth('admin')->user()->id)->where('status', '=', 'lolos')->get();
+                 $dataSurat = Surat::orderBy('id', 'desc')->where('tujuan_surat', '=', auth('admin')->user()->id)->where('status', '=', 'lolos')->get();
 
-        }
+            }
 
-        return view('multiauth::actions.indexSurat', ['dataSurat' => $dataSurat, '$userActive' => $userActive]);
-        } else {
-            return view('welcome');
-        }
+        return DataTables::of($dataSurat)
+            ->addColumn('action', function ($row){
+                    $actions = '';
+                    $actions .= '<div style="white-space: no-wrap;">';
+                    $userActive = auth('admin')->user()->roles->toArray();
 
+                        if ($userActive[0]['name'] == 'super') {
+                            $actions .= 
+                            '<a href="'. route('admin.review', ['id' => $row->id]) .'" type="button" class="btn btn-warning btn-s">Review</a>
+                            <a href="'. route('admin.disposisi', ['id' => $row->id]) .'" type="button" class="btn btn-primary btn-s">Disposisi</a>                               
+                             <a type="button" class="btn btn-danger btn-s">Delete</a> 
+                             ';
+                        } else if ($userActive[0]['name'] == 'reviewer') {
+                            $actions .= '<a href="'. route('admin.review', ['id' => $row->id]) .'" type="button" class="btn btn-warning btn-s">Review</a>';
+                        } else if ($userActive[0]['name'] == 'cto' || $userActive[0]['name'] == 'employee'){
+                            $actions .= '<a href="'. route('admin.disposisi', ['id' => $row->id]) .'" type="button" class="btn btn-primary btn-s">Disposisi</a>';
+                        }
+
+                    return $actions . '</div>';
+                })
+            ->editColumn('status', function ($row){
+                    $actions = '';
+                    $actions .= '<div style="white-space: no-wrap;">';
+
+                    if($row->sifat == 'Biasa'){
+                        $actions .= '<button class="btn btn-success btn-xs">'.$row->sifat.'</button> ';
+                    } else if($row->sifat == 'Edaran'){
+                        $actions .= '<button class="btn btn-primary btn-xs">'.$row->sifat.'</button> ';
+                    } else if($row->sifat == 'Pengumuman'){
+                        $actions .= '<button class="btn btn-warning btn-xs">'.$row->sifat.'</button> ';
+                    } else {
+                        $actions .= '<button class="btn btn-danger btn-xs">'.$row->sifat.'</button> ';
+                    }
+                    echo ' ';
+                    if($row->status == 'belum direview'){
+                        $actions .= '<button class="btn btn-warning btn-xs">New</button>';
+                    } else if($row->status == 'lolos'){
+                        $actions .= '<button class="btn btn-success btn-xs">Reviewed</button>';
+                    } else if($row->status == 'ditolak'){
+                        $actions .= '<button class="btn btn-danger btn-xs">Rejected</button>';
+                    }
+
+                     return $actions . '</div>';
+                })
+            ->editColumn('tujuan_surat', function ($row){
+                return $row->user->name;
+            })
+            ->addColumn('nama_surat', function ($row){
+
+                return '<a href="'.route('surat.show', [$row->id]).'">'.$row->nama_surat.'</a>';
+            })
+            ->rawColumns(['status', 'nama_surat', 'action'])->toJson();
+            
     }
 
     /**
@@ -72,36 +131,37 @@ class SuratController extends Controller
         DB::beginTransaction();
         try{
         
-        $image = $request->file('File');
-        $name = $image->getClientOriginalName();
-        $size = $image->getClientSize();
-        $destinationPath = public_path('/file');
-        $image->move($destinationPath, $name);
+            $image = $request->file('File');
+            $name = $image->getClientOriginalName();
+            $size = $image->getClientSize();
+            $destinationPath = public_path('/file');
+            $image->move($destinationPath, $name);
 
 
-        $surat = new Surat;
-        $surat->nama_surat = $request->nama_surat;
-        $surat->nomor_surat = $request->nomor_surat;
-        $surat->asal_surat = $request->asal_surat;
-        $surat->sifat = $request->sifat_surat;
-        $surat->perihal = $request->perihal;
-        $surat->tujuan_surat = $request->tujuan_surat;
-        $surat->tgl_surat = $request->tgl_surat;
-        $surat->status = 'belum direview';
-        $surat->file = $name;
-        $surat->save();
+            $surat = new Surat;
+            $surat->nama_surat = $request->nama_surat;
+            $surat->nomor_surat = $request->nomor_surat;
+            $surat->asal_surat = $request->asal_surat;
+            $surat->sifat = $request->sifat_surat;
+            $surat->perihal = $request->perihal;
+            $surat->tujuan_surat = $request->tujuan_surat;
+            $surat->tgl_surat = $request->tgl_surat;
+            $surat->status = 'belum direview';
+            $surat->file = $name;
+            $surat->save();
 
-        $lastInserted = DB::getPdo()->lastInsertId();
-        $userActive = auth('admin')->user()->id;
-        
-        $log = new Log_Surat;
-        $log->id_surat = $lastInserted;
-        $log->id_user = $userActive;
-        $log->status = 'baru';
-        $log->keterangan = 'surat masuk baru, belum di review';
-        $log->save();
+            $lastInserted = DB::getPdo()->lastInsertId();
+            $userActive = auth('admin')->user()->id;
+            
+            $log = new Log_Surat;
+            $log->id_surat = $lastInserted;
+            $log->id_user = $userActive;
+            $log->status = 'baru';
+            $log->keterangan = 'surat masuk baru, belum di review';
+            $log->save();
 
-        DB::commit();        
+            DB::commit();        
+
         } catch (Exception $e) {
             DB::rollback();
             return back()->with([
@@ -125,8 +185,9 @@ class SuratController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Surat $surat)
-    {
-        //
+    {                        
+        $Log_Surat = Log_Surat::where('id_surat', '=', $surat->id)->get();        
+        return view('multiauth::actions.showSurat', ['surat' => $surat, 'logSurat' => $Log_Surat]);
     }
 
     /**
@@ -173,35 +234,35 @@ class SuratController extends Controller
         DB::beginTransaction();
         try{
 
-        $status = "";
+            $status = "";
 
-        if($request->status == 'yes'){
-            $status = 'lolos';
-        } else {
-            $status = 'ditolak';
-        }
-        $surat = Surat::findOrFail($id);
+            if($request->status == 'yes'){
+                $status = 'lolos';
+            } else {
+                $status = 'ditolak';
+            }
+            $surat = Surat::findOrFail($id);
 
-        $surat->status = $status;        
-        $surat->save();
+            $surat->status = $status;        
+            $surat->save();
 
-        $userActive = auth('admin')->user()->id;    
-        $email = auth('admin')->user()->email;
+            $userActive = auth('admin')->user()->id;    
+            $email = auth('admin')->user()->email;
 
-        $log = new Log_Surat;
-        $log->id_surat = $id;
-        $log->id_user = $userActive;
-        $log->status = $request->status;
-        $log->keterangan = $request->keterangan;
-        $log->save();
+            $log = new Log_Surat;
+            $log->id_surat = $id;
+            $log->id_user = $userActive;
+            $log->status = $request->status;
+            $log->keterangan = $request->keterangan;
+            $log->save();
 
-        DB::commit();    
+            DB::commit();    
 
-        Mail::send(['text'=>'mail'], [$surat, $email], function ($m) use ($surat, $email) {
-            $m->from($email, 'Surat Masuk');
+            Mail::send(['text'=>'mail'], [$surat, $email], function ($m) use ($surat, $email) {
+                $m->from($email, 'Surat Masuk');
 
-            $m->to($surat->user->email, $surat->user->name)->subject('Surat Baru Masuk');
-        });
+                $m->to($surat->user->email, $surat->user->name)->subject('Surat Baru Masuk');
+            });
 
         } catch (Exception $e) {
             DB::rollback();
@@ -230,28 +291,26 @@ class SuratController extends Controller
         DB::beginTransaction();
         try{
 
-        $surat = Surat::findOrFail($id);
+            $surat = Surat::findOrFail($id);
+            $surat->tujuan_surat = $request->tujuan_surat;        
+            $surat->save();
 
-        $surat->tujuan_surat = $request->tujuan_surat;        
-        $surat->save();
+            $userActive = auth('admin')->user()->id;    
+            $email = auth('admin')->user()->email;
 
-        $userActive = auth('admin')->user()->id;    
-        $email = auth('admin')->user()->email;
+            $log = new Log_Surat;
+            $log->id_surat = $id;
+            $log->id_user = $userActive;
+            $log->status = 'Disposisi';
+            $log->keterangan = $request->keterangan;
+            $log->save();
 
-        $log = new Log_Surat;
-        $log->id_surat = $id;
-        $log->id_user = $userActive;
-        $log->status = 'Disposisi';
-        $log->keterangan = $request->keterangan;
-        $log->save();
+            DB::commit();    
 
-        DB::commit();    
-
-        Mail::send(['html'=>'mail'], [$surat, $email], function ($m) use ($surat, $email) {
-            $m->from($email, 'Surat Masuk');
-
-            $m->to($surat->user->email, $surat->user->name)->subject('Surat Baru Masuk');
-        });
+            Mail::send(['html'=>'mail'], [$surat, $email], function ($m) use ($surat, $email) {
+                $m->from($email, 'Surat Masuk');
+                $m->to($surat->user->email, $surat->user->name)->subject('Surat Baru Masuk');
+            });
 
         } catch (Exception $e) {
             DB::rollback();

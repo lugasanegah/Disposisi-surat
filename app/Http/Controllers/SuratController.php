@@ -24,6 +24,7 @@ class SuratController extends Controller
      */
     public function index()
     {
+
         if(auth('admin')->user() !== null){            
                 
             return view('multiauth::actions.indexSurat');
@@ -46,7 +47,7 @@ class SuratController extends Controller
 
             } else if($userActive[0]['name'] == 'reviewer'){
 
-                $dataSurat = Surat::where('status', '=', 'belum direview')->sortByDesc('id')->get();
+                $dataSurat = Surat::where('status', '=', 'belum direview')->get();
 
             } else {
 
@@ -58,8 +59,7 @@ class SuratController extends Controller
             ->addColumn('action', function ($row){
                     $actions = '';
                     $actions .= '<div style="white-space: no-wrap;">';
-                    $userActive = auth('admin')->user()->roles->toArray();
-
+                    $userActive = auth('admin')->user()->roles->toArray();                    
                         if ($userActive[0]['name'] == 'super') {
                             $actions .= 
                             '<a href="'. route('admin.review', ['id' => $row->id]) .'" type="button" class="btn btn-warning btn-s">Review</a>
@@ -258,7 +258,7 @@ class SuratController extends Controller
 
             DB::commit();    
 
-            Mail::send(['text'=>'mail'], [$surat, $email], function ($m) use ($surat, $email) {
+            Mail::send(['html'=>'mail'], ['surat' => $surat, 'email' => $email], function ($m) use ($surat, $email) {
                 $m->from($email, 'Surat Masuk');
 
                 $m->to($surat->user->email, $surat->user->name)->subject('Surat Baru Masuk');
